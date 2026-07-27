@@ -69,27 +69,34 @@ def columns_workorders():
 @app.post("/chat")
 def chat(request: ChatRequest):
 
-    intent = detect_intent(request.question)
+    try:
+        intent = detect_intent(request.question)
 
-    deals = get_deals()
+        deals = get_deals()
 
-    if intent in ["revenue", "workorders"]:
-        workorders = get_work_orders()
-    else:
-        workorders = None
+        if intent in ["revenue", "workorders", "leadership"]:
+            workorders = get_work_orders()
+        else:
+            workorders = None
 
-    data = execute_tool(
-        intent,
-        deals,
-        workorders
-    )
+        data = execute_tool(
+            intent,
+            deals,
+            workorders
+        )
 
-    answer = generate_answer(
-        request.question,
-        data
-    )
+        answer = generate_answer(
+            request.question,
+            data
+        )
 
-    return {
-        "intent": intent,
-        "answer": answer
-    }
+        return {
+            "intent": intent,
+            "answer": answer
+        }
+
+    except Exception as e:
+        print("CHAT ERROR:", str(e))
+        return {
+            "error": str(e)
+        }
