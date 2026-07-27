@@ -38,6 +38,7 @@ def get_board_items(board_id):
     )
 
     data = response.json()
+    print(data)
 
     items = data["data"]["boards"][0]["items_page"]["items"]
 
