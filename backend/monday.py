@@ -79,4 +79,6 @@ from config import WORKORDERS_BOARD_ID
 
 def get_work_orders():
 
+    print("WORKORDER BOARD:", WORKORDERS_BOARD_ID)
+
     return get_board_items(WORKORDERS_BOARD_ID)
