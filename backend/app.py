@@ -15,7 +15,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173","https://skylark-drones-brxv.vercel.app"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://skylark-drones-brxv.vercel.app"
+        ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -66,35 +69,27 @@ def columns_workorders():
 @app.post("/chat")
 def chat(request: ChatRequest):
 
-    deals = get_deals()
-    workorders = get_work_orders()
-
-    # Complete business data
-    full_dashboard = dashboard(deals, workorders)
-
-    # Detect intent
     intent = detect_intent(request.question)
 
-    # Tool output (optional)
-    tool_data = execute_tool(
+    deals = get_deals()
+
+    if intent in ["revenue", "workorders"]:
+        workorders = get_work_orders()
+    else:
+        workorders = None
+
+    data = execute_tool(
         intent,
         deals,
         workorders
     )
 
-    # Send both
-    context = {
-        "dashboard": full_dashboard,
-        "tool_result": tool_data
-    }
-
     answer = generate_answer(
         request.question,
-        context
+        data
     )
 
     return {
         "intent": intent,
         "answer": answer
     }
-
