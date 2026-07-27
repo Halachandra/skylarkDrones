@@ -37,8 +37,20 @@ def get_board_items(board_id):
         headers=HEADERS,
     )
 
+    
     data = response.json()
-    print(data)
+
+    print("Status Code:", response.status_code)
+    print("Monday Response:", data)
+
+    if response.status_code != 200:
+      raise Exception(f"HTTP {response.status_code}: {response.text}")
+
+    if "errors" in data:
+      raise Exception(f"Monday API Error: {data['errors']}")
+
+    if "data" not in data:
+      raise Exception(f"Unexpected response: {data}")
 
     items = data["data"]["boards"][0]["items_page"]["items"]
 
